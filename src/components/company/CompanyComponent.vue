@@ -32,9 +32,9 @@
           <v-col v-for="item in props.items" :key="item.id" cols="16" sm="6" md="4" lg="4">
           
             <v-card
-            color="blue">
+            color="blue darken-3">
               <v-card-title 
-              class="subheading font-weight-bold"
+              class="subheading font-weight-bold white--text"
               >
                 {{ item.company }}
               </v-card-title>               

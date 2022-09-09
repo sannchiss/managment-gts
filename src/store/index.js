@@ -10,10 +10,12 @@ dblocal.config.debug = false
 import {
   collection,
   query,
+  where,
   getDocs,
   addDoc,
   deleteDoc,
   doc,
+  orderBy
 } from "firebase/firestore";
 import db from "@/firebase/index";
 import { async } from "@firebase/util";
@@ -26,16 +28,34 @@ export default new Vuex.Store({
     data: [],
     loading: false,
     flat_save: false,
+    dialogFileClient: false,
     dialog: {
       show: false,
       deleteAccount: false,
-      dialogTitle : "Delete all data",
+      dialogTitle: "Delete all data",
       dialogMessage: "Are you sure you want to delete all data?",
-      
-
     },
-    sheet:false,
+    icon: {
+      iconAccounDetails: "mdi-card-account-details",
+    },
+    title: {
+      titleForm: "Client Information",
+    },
+
+    sheet: false,
     company: [],
+    integrations: [],
+    keysIntegrations: ["account_txa", "rut", "company", "account_gts", "integration_type", "service_type", "date"],
+    isIntegration: false,
+    historyIntegration: [],
+    sliderInt: {
+      label: '% Advance',
+      val: 0,
+      color: 'red'
+    },
+    maxPorcentaje: [],
+
+
     accountByRef: [],
     keys: ["account_txa", "rut", "company", "account_gts"],
     counter: 1,
@@ -49,9 +69,9 @@ export default new Vuex.Store({
   mutations: {
     async getListAccount(state) {
 
-/**
- * Get data from accounts collection in localbase
- */
+      /**
+       * Get data from accounts collection in localbase
+       */
       try {
         let accounts = await dblocal.collection('accounts')
           .orderBy('id')
@@ -62,43 +82,43 @@ export default new Vuex.Store({
         });
 
       }
-      catch(error) {
+      catch (error) {
         console.log('error: ', error)
       }
 
 
-     /*  dblocal.collection('accounts').get().then(accounts => {
-        console.log(accounts)
-        // convertir a json
-        var json = JSON.stringify(accounts);
-        // convertir a objeto
-        var dataObj = JSON.parse(json);
-        // agregar a state     
-        
-        console.log(dataObj)
-        state.company.push(dataObj);
-      })  */
+      /*  dblocal.collection('accounts').get().then(accounts => {
+         console.log(accounts)
+         // convertir a json
+         var json = JSON.stringify(accounts);
+         // convertir a objeto
+         var dataObj = JSON.parse(json);
+         // agregar a state     
+         
+         console.log(dataObj)
+         state.company.push(dataObj);
+       })  */
 
-       /* const querySnapshot = await getDocs(collection(db, "accounts"));
-      querySnapshot.forEach((doc) => {
-        state.company.push(doc.data());
-         console.log( doc.data());
-      });  */ 
+      /* const querySnapshot = await getDocs(collection(db, "accounts"));
+     querySnapshot.forEach((doc) => {
+       state.company.push(doc.data());
+        console.log( doc.data());
+     });  */
     },
 
     async addListCompany(state, data) {
 
-/**
- * Delete all data in localbase
- */
-     /*     dblocal.delete()
-       .then(response => {
-         console.log('Database deleted, now do something.')
-       })
-       .catch(error => {
-         console.log('There was an error, do something else.')
-       })  */
- 
+      /**
+       * Delete all data in localbase
+       */
+      /*     dblocal.delete()
+        .then(response => {
+          console.log('Database deleted, now do something.')
+        })
+        .catch(error => {
+          console.log('There was an error, do something else.')
+        })  */
+
 
 
       // convert array to json
@@ -107,28 +127,28 @@ export default new Vuex.Store({
       var dataObj = JSON.parse(json);
 
 
-       try {
-        
-        
-          dataObj.forEach(element => {
+      try {
 
-            dblocal.collection('accounts').add({
-              id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
-              account_txa: element.account_txa,
-              rut: element.rut,
-              company: element.company,
-              account_gts: element.account_gts
-            })
+
+        dataObj.forEach(element => {
+
+          dblocal.collection('accounts').add({
+            id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
+            account_txa: element.account_txa,
+            rut: element.rut,
+            company: element.company,
+            account_gts: element.account_gts
+          })
 
             .then(response => {
               //console.log('Update successful, now do something.')
-              
+
             })
             .catch(error => {
               console.log('There was an error, do something else.')
             })
 
-            state.company.push(element)
+          state.company.push(element)
 
 
           if (dataObj.length === state.counter) {
@@ -136,11 +156,11 @@ export default new Vuex.Store({
             console.log("termino")
             state.flat_save = false
             state.loading = false
-            state.counter = 0     
+            state.counter = 0
 
           }
           state.counter++;
-          
+
           console.log("counter: ", state.counter);
         })
 
@@ -154,8 +174,8 @@ export default new Vuex.Store({
 
       //state.file = file
       //state.loading = true 
-      
-    if (file) {
+
+      if (file) {
 
         console.log("file esta")
         state.flat_save = true
@@ -184,15 +204,15 @@ export default new Vuex.Store({
 
         }
 
-        reader.readAsText(file) 
+        reader.readAsText(file)
 
       } else if (!file) {
 
         // clear file
         state.file = []
         state.flat_save = false
-        
-      } 
+
+      }
 
 
     },
@@ -200,6 +220,139 @@ export default new Vuex.Store({
     deleteFile(state) {
       state.company.splice(0, state.company.length)
     },
+
+    /**
+     *  get data client_file_gts from GTS
+     * 
+     */
+
+    async getClientFile(state) {
+
+      // Clear array integrations
+      state.integrations.splice(0, state.integrations.length)
+
+
+      try {
+        const querySnapshot = await getDocs(collection(db, "client_file_gts"));
+        querySnapshot.forEach((doc) => {
+
+
+          state.integrations.push(doc.data());
+
+          // doc id
+
+          // console.log( doc.data());
+        })
+
+
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+    },
+
+    async saveAdvanceIntegration(state, payload) {
+
+      const q = query(collection(db, "client_file_gts"), where("account_gts", "==", payload.account_gts));
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        // console.log(doc.id, " => ", doc.data());
+
+        const colRef = collection(db, "client_file_gts/" + doc.id + "/integrations");
+        addDoc(colRef, {
+          dates: payload.dates,
+          comment: payload.comment,
+          progress: payload.progress,
+        }).then(response => {
+
+          state.loading = false
+
+          state.historyIntegration.push(
+            {
+              dates: payload.dates,
+              comment: payload.comment,
+              progress: payload.progress,
+            }
+          )
+
+
+
+
+        })
+          .catch(error => {
+            console.log('There was an error, do something else.')
+          })
+
+
+
+
+
+
+      });
+
+
+
+
+    },
+
+    async getHistoryIntegration(state, idIntegration) {
+
+      state.historyIntegration.splice(0, state.historyIntegration.length)
+      state.maxPorcentaje.splice(0, state.maxPorcentaje.length)
+
+      const q = query(collection(db, "client_file_gts"), where("account_gts", "==", idIntegration));
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+
+        // get doc subcollection
+        const colRef = collection(db, "client_file_gts/" + doc.id + "/integrations");
+        getDocs(colRef).then(response => {
+
+          response.forEach((doc) => {
+            // order by date
+            state.historyIntegration.push(
+              {
+                dates: doc.data().dates,
+                comment: doc.data().comment,
+                progress: doc.data().progress,
+              }
+            )
+
+
+          }
+          
+          
+          )
+
+          state.historyIntegration.forEach(element => {
+
+            state.maxPorcentaje.push(
+              
+              element.progress
+              
+              ) 
+            
+          });
+
+          // get porcentaje max
+          state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
+
+          console.log("maxPorcentaje: ", Math.max.apply(Math, state.maxPorcentaje))
+
+
+        })
+
+
+
+      })
+
+
+
+
+    },
+
 
 
     copyToClipboard(state, data) {
@@ -213,11 +366,12 @@ export default new Vuex.Store({
       state.snackbar.text = "Copiado al portapapeles";
       state.snackbar.color = "success";
     },
-  
 
 
-    showSnackbar(state, text, color) {
-      console.log("showSnackbar");
+
+    showSnackbar(state, { text, color }) {
+      console.log("text: ", text);
+
       let timeout = 0;
 
       if (state.snackbar.show) {
@@ -235,15 +389,28 @@ export default new Vuex.Store({
     hideSnarkbar(state) {
       state.snackbar.show = false
     },
+
+
+
+
   },
+
+  /**
+   * 
+   * ACTIONS
+   * 
+   */
 
   actions: {
     getListAccount({ commit }) {
       commit("getListAccount")
       // show snackbar
-      commit("showSnackbar", "Lista de cuentas cargada", "success")
+      commit("showSnackbar", {
+        text: "Lista de cuentas cargada",
+        color: "green"
+      })
     },
-    onFileChange({commit}, file) {
+    onFileChange({ commit }, file) {
       commit("onFileChange", file)
     },
     addListCompany({ commit }, data) {
@@ -253,8 +420,7 @@ export default new Vuex.Store({
     },
     deleteFile({ commit }) {
 
-
-       dblocal.collection('accounts')
+      dblocal.collection('accounts')
         .delete()
         .then(response => {
           commit("deleteFile")
@@ -266,26 +432,102 @@ export default new Vuex.Store({
         .catch(error => {
           console.log('There was an error, do something else')
         })
- 
+
+    },
+
+    /**
+     * add file client to firebase (client_file_gts)
+     */
+    async addClientFile({ commit }, data) {
+
+      try {
+        const response = await addDoc(collection(db, "client_file_gts"), data)
+        console.log("Document written with ID: ", response.id);
+        // show snackbar
+        commit("showSnackbar",
+          {
+            text: "Información Guardada",
+            color: "green"
+          })
+
+      }
+      catch (error) {
+        console.log('error: ', error)
+      }
+
+    },
+
+    /**
+     * 
+     * @param {*} param0 
+     * @param {*} payload 
+     * 
+     * save advance integration
+     */
+    saveAdvanceIntegration({ commit }, payload) {
+
+      const addAdvanceIntegration = () => {
+        return new Promise((resolve, reject) => {
+          resolve(commit("saveAdvanceIntegration", payload))
+          reject(new Error('Something went wrong!'))
+        })
+      }
+
+      // use then() to get the result of the promise
+      addAdvanceIntegration().then(() => {
+        // show snackbar
+        commit("showSnackbar", {
+          text: "Información Guardada",
+          color: "green"
+        })
+      }
+      )
+        .catch(error => {
+          commit("showSnackbar", {
+            text: "Error al guardar información de avance",
+            color: "red"
+          })
+
+        })
+
 
 
     },
+
+    /**
+     * 
+     * @param {*} param0 
+     * @param {*} text 
+     * 
+     * Get data integration advance
+     */
+    getHistoryIntegration({ commit }, idIntegration) {
+
+      commit("getHistoryIntegration", idIntegration)
+
+    },
+
+
 
     // function copy to clipboard
     copyToClipboard({ commit }, text) {
       commit("copyToClipboard", text)
       // show snackbar
-      commit("showSnackbar", "Copiado al portapapeles", "success")
+      commit("showSnackbar", {
+        text: "Copiado al portapapeles",
+        color: "green"
+      })
     },
 
-    error({ commit }, text) {
-      commit("showSnackbar", text, "error")
+    showSnackbar({ commit }, { text, color }) {
+
+      commit("showSnackbar", { text, color })
     }
   },
 
   getters: {
     //getCompany: state => state.company,
-  
+
   },
 
 

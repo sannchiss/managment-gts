@@ -100,12 +100,12 @@
           path: '/company'
         },
         {
-          icon: 'mdi-account',
-          title: 'Credential',
-          path: '/credential'
+          icon: 'mdi-domain',
+          title: 'Integrations',
+          path: '/integrations'
         },
         {
-          icon: 'mdi-settings',
+          icon: 'mdi-cog-outline',
           title: 'Settings',
           to: '/settings'
         }

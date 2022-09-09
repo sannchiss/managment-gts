@@ -91,7 +91,7 @@ export default {
 
   },
   components: {
-    "dialog-consulting": require('@/components/Dialogs/TemplateConsulting.vue').default,
+    "dialog-consulting": require('@/components/Dialogs/DialogTemplateConsulting.vue').default,
   },
 
 }

@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import CompanyView from '../views/company/CompanyView.vue'
-import CredentialView from '../views/credential/CredentialView.vue'
+import IntegrationView from '../views/integration-view/IntegrationView.vue'
 
 
 Vue.use(VueRouter)
@@ -19,9 +19,14 @@ const routes = [
     component: CompanyView
   },
   {
-    path: '/credential',
-    name: 'credential',
-    component: CredentialView
+    path: '/integrations',
+    name: 'integrations',
+    component: IntegrationView
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: IntegrationView
   },
   {
     path: '/about',
