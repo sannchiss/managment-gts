@@ -24,7 +24,7 @@
       </v-col>
 
       <v-col md="4">
-        <v-btn color="error" class="white--text" @click.stop="$store.state.dialog.show = true"
+        <v-btn color="error" class="white--text" @click.stop="dialog.delete = true"
           :disabled="$store.state.company.length === 0">
           Delete Accounts
           <v-icon dark>
@@ -36,8 +36,13 @@
 
     </v-row>
 
-    <dialog-consulting @emitDialog="deleteFile" :title="$store.state.dialog.dialogTitle"
-      :message="$store.state.dialog.dialogMessage" />
+    <dialog-consulting 
+    v-if="dialog.delete" 
+    @emitDialog="deleteFile" 
+    :title="dialog.dialogTitle"
+    :message="dialog.dialogMessage"
+    @close = "dialog.delete = false" 
+    />
 
   </v-container>
 
@@ -48,6 +53,16 @@
 
 
 export default {
+
+  data: () => ({
+
+    dialog: {
+            dialogTitle: 'Delete all accounts',
+            dialogMessage: 'Are you sure you want to delete all accounts?',
+            delete: false,
+        },
+
+  }),
 
   methods: {
 
@@ -65,7 +80,6 @@ export default {
 
         this.$store.dispatch("error", "File is empty")
 
-
       }
 
 
@@ -73,11 +87,7 @@ export default {
 
     onFileChange: function (file) {
 
-
-
       this.$store.dispatch("onFileChange", file)
-
-
 
     },
     deleteFile: function () {

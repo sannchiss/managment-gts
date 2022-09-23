@@ -15,10 +15,11 @@ import {
   addDoc,
   deleteDoc,
   doc,
-  orderBy
+  orderBy,
+  getDoc
 } from "firebase/firestore";
-import db from "@/firebase/index";
-import { async } from "@firebase/util";
+import {db, auth} from "@/firebase/index";
+
 
 Vue.use(Vuex);
 
@@ -47,9 +48,9 @@ export default new Vuex.Store({
     integrations: [],
     keysIntegrations: ["account_txa", "rut", "company", "account_gts", "integration_type", "service_type", "date"],
     isIntegration: false,
-    historyIntegration: [],
+    historyIntegration: [],  
     sliderInt: {
-      label: '% Advance',
+      label: '% Advance',      
       val: 0,
       color: 'red'
     },
@@ -64,10 +65,19 @@ export default new Vuex.Store({
       text: "",
       color: "",
     },
+
+    // Form Advance Integration
+    comment: "",
+    dates:[],
+
+
+
   },
-  getters: {},
   mutations: {
     async getListAccount(state) {
+
+      console.log(auth.currentUser);
+
 
       /**
        * Get data from accounts collection in localbase
@@ -228,29 +238,36 @@ export default new Vuex.Store({
 
     async getClientFile(state) {
 
-      // Clear array integrations
       state.integrations.splice(0, state.integrations.length)
 
+         // get data authentification firebase
+         /*  const auth = getAuth();
+          onAuthStateChanged(auth, (user) => {
+            if (user) {
+              // User is signed in, see docs for a list of available properties
+              // https://firebase.google.com/docs/reference/js/firebase.User
+              const uid = user.uid;
+              console.log("uid: ", uid)
+              // ...
+            } else {
+              // User is signed out
+              // ...
+            }
+          }); */
 
-      try {
+        // get data from firebase
         const querySnapshot = await getDocs(collection(db, "client_file_gts"));
         querySnapshot.forEach((doc) => {
-
-
           state.integrations.push(doc.data());
-
-          // doc id
-
-          // console.log( doc.data());
-        })
+          console.log(doc.data());
+        });
 
 
-      } catch (e) {
-        console.error("Error adding document: ", e);
-      }
     },
 
     async saveAdvanceIntegration(state, payload) {
+
+      state.historyIntegration.splice(0, state.historyIntegration.length)
 
       const q = query(collection(db, "client_file_gts"), where("account_gts", "==", payload.account_gts));
 
@@ -268,28 +285,43 @@ export default new Vuex.Store({
 
           state.loading = false
 
-          state.historyIntegration.push(
-            {
-              dates: payload.dates,
-              comment: payload.comment,
-              progress: payload.progress,
-            }
-          )
-
-
-
 
         })
           .catch(error => {
             console.log('There was an error, do something else.')
           })
 
+          
+          getDocs(colRef).then(response => {
+            response.forEach((doc) => {
+
+              // get data from doc
+              state.historyIntegration.push({
+                id: doc.id,
+                account_gts: payload.account_gts,
+                dates: doc.data().dates,
+                comment: doc.data().comment,
+                progress: doc.data().progress,
+
+              })
+                
+              
+
+            
+            })
+          }
+          )
 
 
+           // clear text area
+           state.comment = ""
+           state.dates = []
 
 
+      })
 
-      });
+
+  
 
 
 
@@ -298,10 +330,13 @@ export default new Vuex.Store({
 
     async getHistoryIntegration(state, idIntegration) {
 
+
       state.historyIntegration.splice(0, state.historyIntegration.length)
       state.maxPorcentaje.splice(0, state.maxPorcentaje.length)
 
-      const q = query(collection(db, "client_file_gts"), where("account_gts", "==", idIntegration));
+
+       const q = query(collection(db, "client_file_gts"), where("account_gts", "==", idIntegration))
+
 
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -314,6 +349,8 @@ export default new Vuex.Store({
             // order by date
             state.historyIntegration.push(
               {
+                id: doc.id,
+                account_gts: idIntegration,
                 dates: doc.data().dates,
                 comment: doc.data().comment,
                 progress: doc.data().progress,
@@ -321,10 +358,13 @@ export default new Vuex.Store({
             )
 
 
+
           }
           
+
           
           )
+
 
           state.historyIntegration.forEach(element => {
 
@@ -346,14 +386,112 @@ export default new Vuex.Store({
 
 
 
-      })
-
-
+      }) 
 
 
     },
 
+      
 
+
+    async deleteHistory(state, {id, account_gts}) {
+
+      // update array historyIntegration
+      state.historyIntegration.splice(0, state.historyIntegration.length)
+
+      // delete doc subcollection integrations
+      const q = query(collection(db, "client_file_gts"), where("account_gts", "==", account_gts))
+      const querySnapshot = await getDocs(q)
+
+
+      querySnapshot.forEach((doc) => {
+          
+        const colRef = collection(db, "client_file_gts/" + doc.id + "/integrations")
+        getDocs(colRef).then(response => {
+
+          response.forEach((doc) => {
+            // delete doc subcollection integrations
+            if (doc.id === id) {
+
+               deleteDoc(doc.ref).then(() => {
+
+                // get data from historyIntegration
+                getDocs(colRef).then(response => {
+                  response.forEach((doc) => {
+                    // order by date
+                    state.historyIntegration.push(
+                      {
+                        id: doc.id,
+                        account_gts: account_gts,
+                        dates: doc.data().dates,
+                        comment: doc.data().comment,
+                        progress: doc.data().progress,
+                      }
+                    )
+                  })
+
+                  // clear maxPorcentaje
+                  state.maxPorcentaje.splice(0, state.maxPorcentaje.length)
+
+                  // llamar function actualizar porcentaje max
+                  state.historyIntegration.forEach(element => {
+                      
+                      state.maxPorcentaje.push(
+                        
+                        element.progress
+                        
+                        ) 
+                      
+                    })
+
+                    console.log("maxPorcentaje: ", Math.max.apply(Math, state.maxPorcentaje))
+                    // get porcentaje max
+                    state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
+
+                    // clear text area
+                    state.comment = ""
+                    state.dates = []
+
+
+
+
+              }).catch((error) => {
+                console.error("Error removing document: ", error);
+              });
+
+
+               
+
+                console.log("Document successfully deleted!");
+              }).catch((error) => {
+                console.error("Error removing document: ", error);
+              }); 
+
+              
+            }
+          })
+        })
+        .catch(error => {
+          console.log('There was an error, do something else.')
+
+        })   
+
+
+
+  
+        }
+    
+         
+  
+        
+      )
+      
+
+     
+
+
+
+    },
 
     copyToClipboard(state, data) {
       const el = document.createElement("textarea");
@@ -376,7 +514,7 @@ export default new Vuex.Store({
 
       if (state.snackbar.show) {
         state.snackbar.show = false;
-        timeout = 100;
+        timeout = 10000;
       }
 
       setTimeout(() => {
@@ -412,11 +550,15 @@ export default new Vuex.Store({
     },
     onFileChange({ commit }, file) {
       commit("onFileChange", file)
+      
     },
     addListCompany({ commit }, data) {
       commit("addListCompany", data)
       // show snackbar
-      commit("showSnackbar", "Informacion guardada", "success")
+      commit("showSnackbar", {
+        text: "Informacion guardada",
+        color: "green"
+      })
     },
     deleteFile({ commit }) {
 
@@ -507,6 +649,25 @@ export default new Vuex.Store({
 
     },
 
+    deleteHistory({ commit }, {id, account_gts}) {
+
+        const deleteHistory = () => {
+        return new Promise((resolve, reject) => {
+          resolve(commit("deleteHistory", {id: id, account_gts: account_gts}))
+          reject(new Error('Something went wrong!'))
+        })
+      } 
+
+      // use then() to get the result of the promise
+      deleteHistory().then(() => {
+        // show snackbar
+        commit("showSnackbar", {
+          text: "Información Eliminada",
+          color: "green"
+        })
+      }
+      )  
+    },
 
 
     // function copy to clipboard
@@ -526,7 +687,21 @@ export default new Vuex.Store({
   },
 
   getters: {
-    //getCompany: state => state.company,
+
+    getAdvances: (state) => {
+
+      // order desc by porcentaje
+      const advances = state.historyIntegration.sort((a, b) => {
+        return b.progress - a.progress
+      })
+     
+      return advances
+    
+    }
+
+  
+
+
 
   },
 

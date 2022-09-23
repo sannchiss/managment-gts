@@ -5,24 +5,34 @@
       <span class="text-h5 white--text">Item History</span>
     </v-card-title>
     <v-spacer></v-spacer>
-    <v-list three-line>
-      <v-list-item-group v-model="selectedItem" color="primary">
-        <v-list-item v-for="(item, i) in itemInt" :key="i" >
-          <v-list-item-icon>
-            <v-icon v-text="item.progress"></v-icon>
-          </v-list-item-icon>
-          <v-list-item-content>
-            <v-list-item-title v-text="item.dates"></v-list-item-title>
-            <v-list-item-subtitle v-html="item.comment"></v-list-item-subtitle>
-          </v-list-item-content>
+    <v-list flat subheader three-line v-if="advances.length > 0">
+      <v-list-item v-for="advance in advances" :key="advance.id" three-line>
+        <template v-slot:default="">
           <v-list-item-action>
-            <v-btn icon>
-              <v-icon color="grey lighten-1">mdi-information</v-icon>
-            </v-btn>
+            <v-chip :color="getColor(advance.progress)" dark>
+              {{ advance.progress }}
+              %
+            </v-chip>
+
           </v-list-item-action>
-        </v-list-item>
-      </v-list-item-group>
+
+          <v-list-item-content>
+            <v-list-item-title>{{advance.dates[0]}} - {{advance.dates[1]}}</v-list-item-title>
+            <v-list-item-subtitle>{{advance.comment}}</v-list-item-subtitle>
+          </v-list-item-content>
+
+          <v-list-item-action>
+            <menu-history-integration :advanced="advance" />
+          </v-list-item-action>
+
+        </template>
+      </v-list-item>
+
+
     </v-list>
+
+    <empty-list v-else />
+
 
   </v-card>
 
@@ -34,23 +44,41 @@ export default {
     idInt: {
       type: String,
       required: true
-    },
+    }
   },
   data: () => ({
-    selectedItem: 1,
+
   }),
   computed: {
-    itemInt() {
-      return this.$store.state.historyIntegration
+
+    advances() {
+      return this.$store.getters.getAdvances
     }
 
   },
+
+  methods: {
+    getColor(advance) {
+
+      console.log(advance)
+       if (advance > 0 && advance <= 50) return 'green'
+      else if (advance > 50 && advance <= 80) return 'orange'
+      else return 'red' 
+    }
+  },
   mounted() {
+
     this.$store.dispatch('getHistoryIntegration', this.idInt)
   },
   errorCaptured(err, vm, info) {
     console.log(err)
-  }
+  },
+  components: {
+    // "dialog-consulting": require('@/components/Dialogs/DialogTemplateConsulting.vue').default,
+    "menu-history-integration": require('@/components/Dialogs/contents/menuHistoryIntegration.vue').default,
+    "empty-list": require('@/components/Dialogs/alerts/EmptyList.vue').default,
+  },
+
 
 
 }

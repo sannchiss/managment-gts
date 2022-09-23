@@ -2,8 +2,8 @@
   <v-row justify="center">
 
     <v-dialog
-      v-model="$store.state.dialog.show"
-      max-width="290"
+    :value="true"
+    persistent max-width="290"
     >
       <v-card>
         <v-card-title class="text-h5">
@@ -20,7 +20,7 @@
           <v-btn
             color="green darken-1"
             text
-            @click="$store.state.dialog.show = false"
+            @click="$emit('close')"
           >
             No
           </v-btn>
@@ -40,16 +40,7 @@
 
 <script>
   export default {
-   props: {
-      title: {
-        type: String,
-        default: ''
-      },
-      message: {
-        type: String,
-        default: ''
-      }
-    },
+    props: ['advanced', 'title', 'message'],
     data () {
       return {
         //dialog: false,

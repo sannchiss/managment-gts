@@ -27,7 +27,7 @@
           v-for="item in items"
           :key="item.title"
           :to="item.path"
-          link
+          link          
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -38,6 +38,26 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+
+      <v-divider></v-divider>
+
+      <!--buttom logout-->
+      <v-list-item
+        link
+        @click="logout" v-if="isLogged"
+      >
+        <v-list-item-icon>
+          <v-icon>mdi-logout</v-icon>
+        </v-list-item-icon>
+
+        <v-list-item-content>
+          <v-list-item-title>Logout</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+
+
+
+
     </v-navigation-drawer>
 
 <!--Fin Menu Drawer Lateral-->
@@ -84,34 +104,80 @@
 </template>
 
 <script>
+
+import { onMounted, ref } from 'vue'
+import { getAuth, onAuthStateChanged, signOut } from '@firebase/auth'
+import router from './router'
+
+
+
   export default {
+
+    setup() {
+
+      const isLogged = ref(false)
+
+      onMounted(() => {
+        const auth = getAuth()
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            isLogged.value = true
+          } else {
+            isLogged.value = false
+          }
+        })
+      })
+
+      const logout = () => {
+        const auth = getAuth()
+        signOut(auth).then(() => {
+          console.log('logout')
+          router.push({ name: 'loging' })
+        }).catch((error) => {
+          alert(error)
+          console.log(error)
+        }) 
+      }
+      
+
+      return {
+        isLogged,
+        logout
+      }
+
+
+    },
+
     data: () => ({ 
       drawer: null,
       items: [
         {
           icon: 'mdi-view-dashboard',
           title: 'Dashboard',
-          path: '/'
+          path: '/',
+          action: ''
         },
         {
           //item company
           icon: 'mdi-account-group',
           title: 'Company',
-          path: '/company'
+          path: '/company',
+          action: ''
         },
         {
           icon: 'mdi-domain',
           title: 'Integrations',
-          path: '/integrations'
-        },
-        {
-          icon: 'mdi-cog-outline',
-          title: 'Settings',
-          to: '/settings'
+          path: '/integrations',
+          action: ''
         }
+       
+
       ]
 
       }),
+
+  
+
       components: {
       'snackbar': require('@/components/Shared/Snackbar.vue').default
       }
