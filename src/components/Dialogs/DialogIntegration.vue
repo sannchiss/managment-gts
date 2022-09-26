@@ -1,112 +1,125 @@
 <template>
-<v-row justify="center">
-    <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn color="primary" dark v-bind="attrs" v-on="on">
-                <v-icon>mdi-pen-plus</v-icon>
-                CLIENT ADVANCED
-            </v-btn>
-        </template>
-        <v-card>
-            <v-toolbar dark color="primary">
-                <v-btn icon dark @click="closeDialog">
-                    <v-icon>mdi-close</v-icon>
+    <v-row justify="center">
+        <v-dialog v-model="dialog" fullscreen hide-overlay transition="dialog-bottom-transition">
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                    <v-icon>mdi-pen-plus</v-icon>
+                    CLIENT ADVANCED
                 </v-btn>
-                <v-toolbar-title>Client Settings {{ item.account_gts }}</v-toolbar-title>
-                <v-spacer></v-spacer>                
-            </v-toolbar>
-
+            </template>
             <v-card>
-                <v-card-title>
-                    <span class="text-h5">Advance Integration</span>
-                </v-card-title>
-                <v-card-text>
-                    <v-container>
+                <v-toolbar dark color="primary">
+                    <v-btn icon dark @click="closeDialog">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Client Settings {{ item.account_gts }}</v-toolbar-title>
+                    <v-spacer></v-spacer>
+                </v-toolbar>
 
-                        <v-form
-                        ref="formAdvance"
-                    >
+                <v-card>
+                    <v-card-title>
+                        <span class="text-h5">Advance Integration</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
 
-                        <v-row>
-                            <v-col cols="12" sm="6">
-                                <v-date-picker v-model="$store.state.dates" range></v-date-picker>
-                            </v-col>
-                            <v-col cols="12" sm="6">
-                                <v-text-field 
-                                v-model="dateRangeText"
-                                :rules="dataRangeRules"
-                                 label="Date range" 
-                                 prepend-icon="mdi-calendar" 
-                                 readonly
-                                 >
-                                </v-text-field>
-                                model: {{ $store.state.dates }}
+                            <v-form ref="formAdvance">
 
-                                <v-spacer></v-spacer>
+                                <v-row>
+                                    <v-col cols="12" sm="6">
+                                        <v-date-picker v-model="$store.state.dates" range></v-date-picker>
+                                    </v-col>
+                                    <v-col cols="12" sm="6">
+                                        <v-row class="my-5">
 
-                                <v-divider inset></v-divider>
+                                            <v-text-field v-model="dateRangeText" :rules="dataRangeRules"
+                                                label="Date range" prepend-icon="mdi-calendar" readonly>
+                                            </v-text-field>
 
-                                <v-card>
-                                    <v-textarea 
-                                    name="input-7-1" 
-                                    v-model="$store.state.comment"
-                                    :rules="commentRules" 
-                                    filled 
-                                    label="Comment" 
-                                    auto-grow
-                                    >
-                                    </v-textarea>
-                                    <v-slider 
-                                    v-model="$store.state.sliderInt.val" 
-                                    :label="$store.state.sliderInt.label" 
-                                    :thumb-color="$store.state.sliderInt.color"
-                                    thumb-label="always"
-                                    >
-                                    </v-slider>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col cols="5" sm="9">
+                                                <v-select
+                                                v-model="e"
+                                                :items="itemIntegration"
+                                                label="Shortcut"
+                                                multiple
+                                                 hint="select one or several items"
+                                                persistent-hint
+                                                ></v-select>
+                                            </v-col>
+                                            <v-col cols="5" sm="2">
+                                                <div class="text-center">
+                                                    <div class="my-2">
+                                                        <v-btn
+                                                        color="primary"
+                                                        fab
+                                                        x-small
+                                                        dark
+                                                        @click="addShortcut"
+                                                        >
+                                                        <v-icon>mdi-tooltip-plus</v-icon>
+                                                        </v-btn>
+                                                     </div>
+                                                </div>
 
-                                   
-                                </v-card>
+                                            </v-col>
+                                           
 
-                                <v-col cols="pl-15" sm="0">
-                                    <div class="text-center">
-                                        <v-btn class="ma-9" 
-                                        :loading="$store.state.loading" 
-                                        :disabled="loading" 
-                                        color="primary" 
-                                        @click="saveAdvance">
-                                            <v-icon darken-1 left>mdi-content-save-move</v-icon>
-                                            Save advance
-                                        </v-btn>
-                                    </div>
-                                </v-col>
+                                        </v-row>
+                                        <v-card class="my-8">
+                                            <v-textarea name="input-7-1" v-model="$store.state.comment"
+                                                :rules="commentRules" filled label="Comment" auto-grow
+                                                clearable
+                                                clear-icon="mdi-close-circle"
+                                                hint="Enter your comment"
+                                                persistent-hint
+                                                
+                                                >
+                                            </v-textarea>
+                                            <v-slider v-model="$store.state.sliderInt.val"
+                                                :label="$store.state.sliderInt.label"
+                                                :thumb-color="$store.state.sliderInt.color" thumb-label="always">
+                                            </v-slider>
+                                        </v-card>
 
-                            </v-col>
+                                        <v-col cols="pl-15" sm="0">
+                                            <div class="text-center">
+                                                <v-btn class="ma-9" :loading="$store.state.loading" :disabled="loading"
+                                                    color="primary" @click="saveAdvance">
+                                                    <v-icon darken-1 left>mdi-content-save-move</v-icon>
+                                                    Save advance
+                                                </v-btn>
+                                            </div>
+                                        </v-col>
 
-                        </v-row>
+                                    </v-col>
 
-                        </v-form>
+                                </v-row>
 
-                    </v-container>
+                            </v-form>
 
-                </v-card-text>
+                        </v-container>
+
+                    </v-card-text>
+
+                </v-card>
+
+                <v-divider></v-divider>
+
+                <v-card>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
+                                <content-history-integration :idInt="item.account_gts" />
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
 
             </v-card>
-
-            <v-divider></v-divider>
-
-            <v-card>               
-                <v-card-text>
-                    <v-container>
-                        <v-row>
-                            <content-history-integration :idInt="item.account_gts"/>
-                        </v-row>
-                    </v-container>
-                </v-card-text>
-            </v-card>
-
-        </v-card>
-    </v-dialog>
-</v-row>
+        </v-dialog>
+    </v-row>
 </template>
 
 <script>
@@ -115,25 +128,34 @@ export default {
         item: {
             type: Object,
             required: true
-        },       
-        
+        },
+
     },
     data() {
         return {
+            loadingShortCut: false,
             loading: false,
             dialog: false,
             notifications: false,
             sound: true,
             widgets: false,
             commentRules: [
-            v => !!v || 'Required',
-            v => v.length < 100 || 'The comment must be less than 100 characters',
-            v => v.length > 0 || 'The comment must be greater than 0 characters',
-            ],
+                 v => !!v || 'Required',
+                v => v.length < 500 || 'The comment must be less than 100 characters',
+                v => v.length > 0 || 'The comment must be greater than 0 characters',
+             ],
             dataRangeRules: [
-            v => !!v || 'Required',
+                v => !!v || 'Required',
             ],
 
+            itemIntegration: [
+                'Mail enviado al cliente con el para agendar video llamada', 
+                'Se agendo video llamada con el cliente', 
+                'Cliente no contesta llamada',
+                'Cliente no contesta video llamada',
+                'Cliente integrado, se enviaron las credenciales GTS y la ficha de integración'                
+            ],
+            e: [],
 
         }
     },
@@ -143,34 +165,41 @@ export default {
             this.$store.commit('getClientFile')
         },
 
+        addShortcut() {
+
+            // add text to comment
+            this.$store.state.comment =  this.e + '\n'
+
+
+        },
 
         saveAdvance() {
 
-                if (this.$refs.formAdvance.validate()) {
+            if (this.$refs.formAdvance.validate()) {
 
-                   
-                    this.$store.state.loading = true
-        
-                    const payload = {
-                        account_gts: this.item.account_gts,
-                        dates: this.$store.state.dates,
-                        comment: this.$store.state.comment,
-                        progress: this.$store.state.sliderInt.val,                
-                    }
-                     this.$store.dispatch("saveAdvanceIntegration", payload) 
-                     .then(() =>{
+
+                this.$store.state.loading = true
+
+                const payload = {
+                    account_gts: this.item.account_gts,
+                    dates: this.$store.state.dates,
+                    comment: this.$store.state.comment,
+                    progress: this.$store.state.sliderInt.val,
+                }
+                this.$store.dispatch("saveAdvanceIntegration", payload)
+                    .then(() => {
                         /* this.$store.state.loading = false
                         this.dialog = false
                         this.$store.commit('getClientFile') */
-                     })
+                    })
 
-                   
-                }
 
-            
+            }
+
+
         },
 
-       
+
     },
     computed: {
         dateRangeText() {
@@ -180,7 +209,7 @@ export default {
     components: {
         "content-history-integration": require("@/components/Dialogs/contents/historyIntegration.vue").default,
     },
-    
+
 
 }
 </script>
