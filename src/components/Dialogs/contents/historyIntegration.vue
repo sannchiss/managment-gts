@@ -9,19 +9,24 @@
       <v-list-item v-for="advance in advances" :key="advance.id" three-line>
         <template v-slot:default="">
           <v-list-item-action>
-          
-            
-            <v-chip :color="getColor(advance.progress)" dark >
 
-             <v-icon v-if="completed" >
-              mdi-star-check
-            </v-icon>
-            <v-icon v-else>
-              mdi-star-outline
-            </v-icon>
 
-              {{ advance.progress }}
-              %
+            <v-chip :color="getColor(advance.progress)" dark>
+
+              <v-icon v-if="advance.progress == 100">
+                mdi-star-check
+              </v-icon>
+              <v-icon v-else>
+                mdi-clock-outline
+              </v-icon>
+
+
+              <div class="ml-3">
+
+                {{ advance.progress }}
+                %
+
+              </div>
             </v-chip>
 
           </v-list-item-action>
@@ -31,7 +36,7 @@
             <v-list-item-subtitle>{{advance.comment}}</v-list-item-subtitle>
           </v-list-item-content>
 
-          <v-list-item-action>            
+          <v-list-item-action>
             <menu-history-integration :advanced="advance" />
           </v-list-item-action>
 
@@ -59,6 +64,7 @@ export default {
   data: () => ({
 
     completed: false,
+    icon: 'mdi-star-outline',
 
   }),
   computed: {
@@ -73,23 +79,17 @@ export default {
     getColor(advance) {
 
       console.log(advance)
-       if (advance > 0 && advance <= 50) {
-        this.completed = false
+      if (advance > 0 && advance <= 50)
         return 'green'
-       }
-      else if (advance > 50 && advance <= 80) {
-        this.completed = false
+      else if (advance > 50 && advance <= 80)
         return 'orange'
-      } 
-      else if (advance > 80 && advance <=99 ) {
-        this.completed = false
+      else if (advance > 80 && advance <= 99)
         return 'red'
-      }
-        
-       else if (advance == 100) {
-        this.completed = true
-        return 'blue'
-      }
+      else
+        if (advance == 100)
+          return 'blue'
+
+
     }
   },
   mounted() {

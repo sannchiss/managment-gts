@@ -2,6 +2,8 @@ import Vue from "vue"
 import Vuex, { Store } from "vuex"
 import Localbase from "localbase"
 
+import emailjs from "emailjs-com"
+
 let dblocal = new Localbase("db");
 
 // desahabilitar resgistros en consola
@@ -240,27 +242,24 @@ export default new Vuex.Store({
 
       state.integrations.splice(0, state.integrations.length)
 
-         // get data authentification firebase
-         /*  const auth = getAuth();
-          onAuthStateChanged(auth, (user) => {
-            if (user) {
-              // User is signed in, see docs for a list of available properties
-              // https://firebase.google.com/docs/reference/js/firebase.User
-              const uid = user.uid;
-              console.log("uid: ", uid)
-              // ...
-            } else {
-              // User is signed out
-              // ...
-            }
-          }); */
-
         // get data from firebase
         const querySnapshot = await getDocs(collection(db, "client_file_gts"));
         querySnapshot.forEach((doc) => {
           state.integrations.push(doc.data());
           console.log(doc.data());
         });
+
+        var templateParams = {
+          name: 'James',
+          message: 'Check this out! sddfsdfsdfdsfs'
+      };
+
+        emailjs.send('service_dtorihg', 'template_p6x0lj6', templateParams, 'EcVfc9_6le9pSpLZE' )
+          .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+          }, function(error) {
+            console.log('FAILED...', error)
+          })
 
 
     },
@@ -365,6 +364,9 @@ export default new Vuex.Store({
           
           )
 
+          // get last date
+          var lastDate = state.historyIntegration[state.historyIntegration.length - 1].dates
+
 
           state.historyIntegration.forEach(element => {
 
@@ -374,12 +376,11 @@ export default new Vuex.Store({
               
               ) 
             
-          });
+          })
 
           // get porcentaje max
           state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
 
-          console.log("maxPorcentaje: ", Math.max.apply(Math, state.maxPorcentaje))
 
 
         })
@@ -694,6 +695,8 @@ export default new Vuex.Store({
       const advances = state.historyIntegration.sort((a, b) => {
         return b.progress - a.progress
       })
+
+      console.log("advances: ", advances);
      
       return advances
     

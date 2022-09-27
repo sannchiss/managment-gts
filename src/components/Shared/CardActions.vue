@@ -26,6 +26,9 @@
         :isInfoClient="isInfoClient"  
         />
 
+        <option-send-mail />
+
+
     </v-card-actions>
 
 
@@ -61,6 +64,7 @@ export default {
     "dialog-client-file": require('@/components/Dialogs/DialogClientFile.vue').default,
     "dialog-integration": require('@/components/Dialogs/DialogIntegration.vue').default,
     "dialog-form": require('@/components/Dialogs/DialogForm.vue').default,
+    "option-send-mail": require('@/components/Shared/MenuIntegrationMail/optionSendMail.vue').default,
     },
 }
 </script>

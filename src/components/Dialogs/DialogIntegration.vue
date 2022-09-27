@@ -74,7 +74,7 @@
                                                 clear-icon="mdi-close-circle"
                                                 hint="Enter your comment"
                                                 persistent-hint
-                                                
+
                                                 >
                                             </v-textarea>
                                             <v-slider v-model="$store.state.sliderInt.val"
@@ -152,8 +152,17 @@ export default {
                 'Mail enviado al cliente con el para agendar video llamada', 
                 'Se agendo video llamada con el cliente', 
                 'Cliente no contesta llamada',
-                'Cliente no contesta video llamada',
-                'Cliente integrado, se enviaron las credenciales GTS y la ficha de integración'                
+                'Cliente no contestó video llamada / no se pudo conectar',
+                'Cliente integrado, se enviaron las credenciales GTS y la ficha de integración',
+                'Cliente integrado por medio de los Web Services',
+                'Cliente en proceso de integración por medio de los Web Services',
+                'No es integración GTS',
+                'Stand by',
+                'Cliente por conector Woocommerce',
+                'Cliente por conector Shopify',
+                'Cliente por conector Magento',
+                'Cliente por conector Prestashop',
+                'Cliente por conector Bigcommerce',
             ],
             e: [],
 
