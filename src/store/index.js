@@ -45,6 +45,18 @@ export default new Vuex.Store({
       titleForm: "Client Information",
     },
 
+    // send mail file client
+    sendMailFileClient: {
+      email: "ricardosilva@fedex.com",
+      reply_to: "sannchiss.perez@fedex.com",
+      id_project: "",
+      phase_of_day: [],
+      print_type: [],
+      property_print: [],
+      trained_user: "",
+    },
+
+
     sheet: false,
     company: [],
     integrations: [],
@@ -98,39 +110,10 @@ export default new Vuex.Store({
         console.log('error: ', error)
       }
 
-
-      /*  dblocal.collection('accounts').get().then(accounts => {
-         console.log(accounts)
-         // convertir a json
-         var json = JSON.stringify(accounts);
-         // convertir a objeto
-         var dataObj = JSON.parse(json);
-         // agregar a state     
-         
-         console.log(dataObj)
-         state.company.push(dataObj);
-       })  */
-
-      /* const querySnapshot = await getDocs(collection(db, "accounts"));
-     querySnapshot.forEach((doc) => {
-       state.company.push(doc.data());
-        console.log( doc.data());
-     });  */
+     
     },
 
     async addListCompany(state, data) {
-
-      /**
-       * Delete all data in localbase
-       */
-      /*     dblocal.delete()
-        .then(response => {
-          console.log('Database deleted, now do something.')
-        })
-        .catch(error => {
-          console.log('There was an error, do something else.')
-        })  */
-
 
 
       // convert array to json
@@ -249,19 +232,6 @@ export default new Vuex.Store({
           console.log(doc.data());
         });
 
-        var templateParams = {
-          name: 'James',
-          message: 'Check this out! sddfsdfsdfdsfs'
-      };
-
-        emailjs.send('service_dtorihg', 'template_p6x0lj6', templateParams, 'EcVfc9_6le9pSpLZE' )
-          .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-          }, function(error) {
-            console.log('FAILED...', error)
-          })
-
-
     },
 
     async saveAdvanceIntegration(state, payload) {
@@ -303,27 +273,16 @@ export default new Vuex.Store({
                 progress: doc.data().progress,
 
               })
-                
-              
 
-            
             })
           }
           )
-
 
            // clear text area
            state.comment = ""
            state.dates = []
 
-
       })
-
-
-  
-
-
-
 
     },
 
@@ -333,9 +292,7 @@ export default new Vuex.Store({
       state.historyIntegration.splice(0, state.historyIntegration.length)
       state.maxPorcentaje.splice(0, state.maxPorcentaje.length)
 
-
-       const q = query(collection(db, "client_file_gts"), where("account_gts", "==", idIntegration))
-
+      const q = query(collection(db, "client_file_gts"), where("account_gts", "==", idIntegration))
 
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc) => {
@@ -356,11 +313,7 @@ export default new Vuex.Store({
               }
             )
 
-
-
           }
-          
-
           
           )
 
@@ -381,18 +334,11 @@ export default new Vuex.Store({
           // get porcentaje max
           state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
 
-
-
         })
-
-
 
       }) 
 
-
     },
-
-      
 
 
     async deleteHistory(state, {id, account_gts}) {
@@ -454,13 +400,9 @@ export default new Vuex.Store({
                     state.dates = []
 
 
-
-
               }).catch((error) => {
                 console.error("Error removing document: ", error);
               });
-
-
                
 
                 console.log("Document successfully deleted!");
@@ -476,22 +418,23 @@ export default new Vuex.Store({
           console.log('There was an error, do something else.')
 
         })   
-
-
-
   
         }
-    
-         
-  
         
       )
-      
-
-     
 
 
+    },
 
+    sendMailFileClient(state, payload) {
+
+        emailjs.send('service_oghzm3i', 'template_gvdmscx', payload, '8y6vymIBpdZEdKKoL' )
+          .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            state.loading = false
+          }, function(error) {
+            console.log('FAILED...', error)
+          })  
     },
 
     copyToClipboard(state, data) {
@@ -505,8 +448,6 @@ export default new Vuex.Store({
       state.snackbar.text = "Copiado al portapapeles";
       state.snackbar.color = "success";
     },
-
-
 
     showSnackbar(state, { text, color }) {
       console.log("text: ", text);
@@ -528,9 +469,6 @@ export default new Vuex.Store({
     hideSnarkbar(state) {
       state.snackbar.show = false
     },
-
-
-
 
   },
 
@@ -633,8 +571,6 @@ export default new Vuex.Store({
 
         })
 
-
-
     },
 
     /**
@@ -696,19 +632,11 @@ export default new Vuex.Store({
         return b.progress - a.progress
       })
 
-      console.log("advances: ", advances);
-     
       return advances
     
     }
 
-  
-
-
-
   },
-
-
 
   modules: {},
 })

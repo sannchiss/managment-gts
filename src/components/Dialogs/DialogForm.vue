@@ -26,8 +26,10 @@
           </v-toolbar>
           
           <v-card-text>
-            <inputs-card-client v-if="isInfoClient" :itemInfo=item.info_client />
-            
+            <div v-if="isInfoClient">
+              <inputs-card-client :itemInfo=item.info_client />
+            </div>
+           
           </v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -75,7 +77,7 @@
         dialog: false,
       }),
       components: {
-        "inputs-card-client": require("@/components/Dialogs/contents/inputsCardClient.vue").default
+        "inputs-card-client": require("@/components/Dialogs/contents/inputsCardClient.vue").default,
             
       },
       mounted() {

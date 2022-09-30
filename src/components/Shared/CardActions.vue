@@ -26,7 +26,7 @@
         :isInfoClient="isInfoClient"  
         />
 
-        <option-send-mail />
+        <option-send-mail v-if="isIntegration" :item="item" />
 
 
     </v-card-actions>
