@@ -31,7 +31,7 @@
                         <v-container>
                             <v-row>
                                 <v-col class="d-flex" cols="5" sm="2">
-                                    <v-select v-model="serviceType" :items="['B2B', 'B2C']" label="Service Type"></v-select>
+                                    <v-select v-model="serviceType" :items="['B2B', 'B2C', 'B2B/B2C']" label="Service Type"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="5" md="4">
                                     <v-select v-model="integrationType"
