@@ -317,9 +317,6 @@ export default new Vuex.Store({
           
           )
 
-          // get last date
-          var lastDate = state.historyIntegration[state.historyIntegration.length - 1].dates
-
 
           state.historyIntegration.forEach(element => {
 
@@ -333,6 +330,7 @@ export default new Vuex.Store({
 
           // get porcentaje max
           state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
+          console.log("porcentaje max: ", state.sliderInt.val)
 
         })
 
