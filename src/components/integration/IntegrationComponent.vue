@@ -81,6 +81,42 @@
                 {{ item.company }}
               </v-card-title>
 
+
+              <div class="text-left">
+
+                <v-menu offset-x>
+
+                  <template v-slot:activator="{ on, attrs }" >
+                    
+                    <v-btn
+                    color="primary"
+                    dark
+                    v-bind="attrs"
+                    v-on="on"
+                    :onclick="accountList(item.company)"
+                    >
+                  Accounts
+                  </v-btn>
+                  </template>
+
+                  <v-list>
+                   
+                    <v-list-item v-for="(item, index) in $store.state.accountList" :key="index">
+    
+                      <v-list-item-title>{{ item.title }}</v-list-item-title>
+    
+                    </v-list-item>
+
+                  </v-list>
+
+
+                </v-menu>
+
+
+              </div>
+
+
+
               <v-divider></v-divider>
 
               <v-list dense>
@@ -186,7 +222,7 @@
         filter: {},
         sortDesc: false,
         page: 1,
-        itemsPerPage: 4,
+        itemsPerPage: 20,
         sortBy: 'name',
         keys: this.$store.state.keysIntegrations,
         items: this.$store.state.integrations,
@@ -211,6 +247,15 @@
       updateItemsPerPage (number) {
         this.itemsPerPage = number
       },
+
+
+      accountList(item){
+        console.log(item)
+      }
+
+
+
+
     },
     mounted () {
       this.$store.commit('getClientFile')

@@ -45,6 +45,14 @@ export default new Vuex.Store({
       titleForm: "Client Information",
     },
 
+    // account list client
+    accountList: [
+      {
+        title: "Account 1",
+      }
+    ],
+
+
     // send mail file client
     sendMailFileClient: {
       email: "ricardosilva@fedex.com",
