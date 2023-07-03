@@ -27,7 +27,7 @@
           
           <v-card-text>
             <div v-if="isInfoClient">
-              <inputs-card-client :itemInfo=item.info_client />
+              <inputs-card-client :item=item />
             </div>
            
           </v-card-text>

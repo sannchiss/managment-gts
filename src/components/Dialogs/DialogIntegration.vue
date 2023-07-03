@@ -32,50 +32,33 @@
                                     <v-col cols="12" sm="6">
                                         <v-row class="my-5">
 
-                                            <v-text-field v-model="dateRangeText" :rules="dataRangeRules"
-                                                label="Date range" prepend-icon="mdi-calendar" readonly>
+                                            <v-text-field v-model="dateRangeText" :rules="dataRangeRules" label="Date range"
+                                                prepend-icon="mdi-calendar" readonly>
                                             </v-text-field>
 
                                         </v-row>
                                         <v-row>
                                             <v-col cols="5" sm="9">
-                                                <v-select
-                                                v-model="e"
-                                                :items="itemIntegration"
-                                                label="Shortcut"
-                                                multiple
-                                                 hint="select one or several items"
-                                                persistent-hint
-                                                ></v-select>
+                                                <v-select v-model="e" :items="itemIntegration" label="Shortcut" multiple
+                                                    hint="select one or several items" persistent-hint></v-select>
                                             </v-col>
                                             <v-col cols="5" sm="2">
                                                 <div class="text-center">
                                                     <div class="my-2">
-                                                        <v-btn
-                                                        color="primary"
-                                                        fab
-                                                        x-small
-                                                        dark
-                                                        @click="addShortcut"
-                                                        >
-                                                        <v-icon>mdi-tooltip-plus</v-icon>
+                                                        <v-btn color="primary" fab x-small dark @click="addShortcut">
+                                                            <v-icon>mdi-tooltip-plus</v-icon>
                                                         </v-btn>
-                                                     </div>
+                                                    </div>
                                                 </div>
 
                                             </v-col>
-                                           
+
 
                                         </v-row>
                                         <v-card class="my-8">
                                             <v-textarea name="input-7-1" v-model="$store.state.comment"
-                                                :rules="commentRules" filled label="Comment" auto-grow
-                                                clearable
-                                                clear-icon="mdi-close-circle"
-                                                hint="Enter your comment"
-                                                persistent-hint
-
-                                                >
+                                                :rules="commentRules" filled label="Comment" auto-grow clearable
+                                                clear-icon="mdi-close-circle" hint="Enter your comment" persistent-hint>
                                             </v-textarea>
                                             <v-slider v-model="$store.state.sliderInt.val"
                                                 :label="$store.state.sliderInt.label"
@@ -140,17 +123,17 @@ export default {
             sound: true,
             widgets: false,
             commentRules: [
-                 v => !!v || 'Required',
+                v => !!v || 'Required',
                 v => v.length < 500 || 'The comment must be less than 100 characters',
                 v => v.length > 0 || 'The comment must be greater than 0 characters',
-             ],
+            ],
             dataRangeRules: [
                 v => !!v || 'Required',
             ],
 
             itemIntegration: [
-                'Mail enviado al cliente con el para agendar video llamada', 
-                'Se agendo video llamada con el cliente', 
+                'Mail enviado al cliente con el para agendar video llamada',
+                'Se agendo video llamada con el cliente',
                 'Cliente no contesta llamada',
                 'Cliente no contestó video llamada / no se pudo conectar',
                 'Cliente integrado, se enviaron las credenciales GTS y la ficha de integración',
@@ -181,7 +164,7 @@ export default {
         addShortcut() {
 
             // add text to comment
-            this.$store.state.comment =  this.e + '\n'
+            this.$store.state.comment = this.e + '\n'
 
 
         },
@@ -227,6 +210,4 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -94,7 +94,7 @@ export default {
       
       this.$store.dispatch("deleteFile")
 
-      this.$store.state.dialog.show = false
+      this.dialog.delete = false
     }
 
 

@@ -27,7 +27,7 @@
           v-for="item in items"
           :key="item.title"
           :to="item.path"
-          link          
+          link            
         >
           <v-list-item-icon>
             <v-icon>{{ item.icon }}</v-icon>
@@ -66,8 +66,8 @@
       app
       color="indigo darken-2"
       dark
-      shrink-on-scroll
-      prominent          
+      prominent
+                
     >
       <v-app-bar-nav-icon
       @click="drawer=!drawer"></v-app-bar-nav-icon>

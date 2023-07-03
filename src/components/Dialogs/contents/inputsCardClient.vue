@@ -4,7 +4,7 @@
     <v-row>
       <v-col cols="12" >
         <v-textarea
-        v-model="itemInfo"
+        v-model="item.info_client"
         name="input-7-1"
         filled
         auto-grow
@@ -13,8 +13,9 @@
     </v-textarea>
       </v-col>
     </v-row>
-  </v-container>
 
+  
+  </v-container>
 
 
 </template>
@@ -22,8 +23,9 @@
 <script>
 export default {
   props:{
-    itemInfo: {
-      type: String
+    item: {
+      type: Object,
+      required: true
     }
 
   },
