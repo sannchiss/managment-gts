@@ -35,7 +35,19 @@
                                 </v-col>
                                 <v-col cols="12" sm="5" md="4">
                                     <v-select v-model="integrationType"
-                                        :items="['MANUAL GTS', 'MASIVA GTS', 'MANUAL GTS', 'MASIVA GTS', 'WEB SERVICE', 'WEB SERVICE FAME']"
+                                        :items="[
+                                            'MANUAL GTS', 
+                                            'MASIVA GTS', 
+                                            'MASIVA GTS', 
+                                            'WEB SERVICE', 
+                                            'WEB SERVICE FAME', 
+                                            'CONECTOR WOOCOMMERCE',
+                                            'CONECTOR MAGENTO',
+                                            'CONECTOR PRESTASHOP',
+                                            'CONECTOR SHOPIFY',
+                                            'CONECTOR VTEX',
+                                            'CONECTOR MERCADO LIBRE',
+                                            ]"
                                         label="Integration Type"></v-select>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="4">
