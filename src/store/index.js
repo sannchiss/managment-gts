@@ -20,7 +20,7 @@ import {
   orderBy,
   getDoc
 } from "firebase/firestore";
-import {db, auth} from "@/firebase/index";
+import { db, auth } from "@/firebase/index";
 
 
 Vue.use(Vuex);
@@ -45,12 +45,6 @@ export default new Vuex.Store({
       titleForm: "Client Information",
     },
 
-    // account list client
-    accountList: [
-      {
-        title: "Account 1",
-      }
-    ],
 
 
     // send mail file client
@@ -70,9 +64,9 @@ export default new Vuex.Store({
     integrations: [],
     keysIntegrations: ["account_txa", "rut", "company", "account_gts", "integration_type", "service_type", "date"],
     isIntegration: false,
-    historyIntegration: [],  
+    historyIntegration: [],
     sliderInt: {
-      label: '% Advance',      
+      label: '% Advance',
       val: 0,
       color: 'red'
     },
@@ -90,7 +84,7 @@ export default new Vuex.Store({
 
     // Form Advance Integration
     comment: "",
-    dates:[],
+    dates: [],
 
 
 
@@ -111,14 +105,16 @@ export default new Vuex.Store({
 
         accounts.forEach(element => {
           state.company.push(element)
-        });
+        })
+
+
 
       }
       catch (error) {
         console.log('error: ', error)
       }
 
-     
+
     },
 
     async addListCompany(state, data) {
@@ -233,12 +229,12 @@ export default new Vuex.Store({
 
       state.integrations.splice(0, state.integrations.length)
 
-        // get data from firebase
-        const querySnapshot = await getDocs(collection(db, "client_file_gts"));
-        querySnapshot.forEach((doc) => {
-          state.integrations.push(doc.data());
-          console.log(doc.data());
-        });
+      // get data from firebase
+      const querySnapshot = await getDocs(collection(db, "client_file_gts"));
+      querySnapshot.forEach((doc) => {
+        state.integrations.push(doc.data());
+        console.log(doc.data());
+      });
 
     },
 
@@ -268,27 +264,27 @@ export default new Vuex.Store({
             console.log('There was an error, do something else.')
           })
 
-          
-          getDocs(colRef).then(response => {
-            response.forEach((doc) => {
 
-              // get data from doc
-              state.historyIntegration.push({
-                id: doc.id,
-                account_gts: payload.account_gts,
-                dates: doc.data().dates,
-                comment: doc.data().comment,
-                progress: doc.data().progress,
+        getDocs(colRef).then(response => {
+          response.forEach((doc) => {
 
-              })
+            // get data from doc
+            state.historyIntegration.push({
+              id: doc.id,
+              account_gts: payload.account_gts,
+              dates: doc.data().dates,
+              comment: doc.data().comment,
+              progress: doc.data().progress,
 
             })
-          }
-          )
 
-           // clear text area
-           state.comment = ""
-           state.dates = []
+          })
+        }
+        )
+
+        // clear text area
+        state.comment = ""
+        state.dates = []
 
       })
 
@@ -322,18 +318,18 @@ export default new Vuex.Store({
             )
 
           }
-          
+
           )
 
 
           state.historyIntegration.forEach(element => {
 
             state.maxPorcentaje.push(
-              
+
               element.progress
-              
-              ) 
-            
+
+            )
+
           })
 
           // get porcentaje max
@@ -342,12 +338,12 @@ export default new Vuex.Store({
 
         })
 
-      }) 
+      })
 
     },
 
 
-    async deleteHistory(state, {id, account_gts}) {
+    async deleteHistory(state, { id, account_gts }) {
 
       // update array historyIntegration
       state.historyIntegration.splice(0, state.historyIntegration.length)
@@ -358,7 +354,7 @@ export default new Vuex.Store({
 
 
       querySnapshot.forEach((doc) => {
-          
+
         const colRef = collection(db, "client_file_gts/" + doc.id + "/integrations")
         getDocs(colRef).then(response => {
 
@@ -366,7 +362,7 @@ export default new Vuex.Store({
             // delete doc subcollection integrations
             if (doc.id === id) {
 
-               deleteDoc(doc.ref).then(() => {
+              deleteDoc(doc.ref).then(() => {
 
                 // get data from historyIntegration
                 getDocs(colRef).then(response => {
@@ -388,45 +384,45 @@ export default new Vuex.Store({
 
                   // llamar function actualizar porcentaje max
                   state.historyIntegration.forEach(element => {
-                      
-                      state.maxPorcentaje.push(
-                        
-                        element.progress
-                        
-                        ) 
-                      
-                    })
 
-                    console.log("maxPorcentaje: ", Math.max.apply(Math, state.maxPorcentaje))
-                    // get porcentaje max
-                    state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
+                    state.maxPorcentaje.push(
 
-                    // clear text area
-                    state.comment = ""
-                    state.dates = []
+                      element.progress
+
+                    )
+
+                  })
+
+                  console.log("maxPorcentaje: ", Math.max.apply(Math, state.maxPorcentaje))
+                  // get porcentaje max
+                  state.sliderInt.val = Math.max.apply(Math, state.maxPorcentaje)
+
+                  // clear text area
+                  state.comment = ""
+                  state.dates = []
 
 
-              }).catch((error) => {
-                console.error("Error removing document: ", error);
-              });
-               
+                }).catch((error) => {
+                  console.error("Error removing document: ", error);
+                });
+
 
                 console.log("Document successfully deleted!");
               }).catch((error) => {
                 console.error("Error removing document: ", error);
-              }); 
+              });
 
-              
+
             }
           })
         })
-        .catch(error => {
-          console.log('There was an error, do something else.')
+          .catch(error => {
+            console.log('There was an error, do something else.')
 
-        })   
-  
-        }
-        
+          })
+
+      }
+
       )
 
 
@@ -434,13 +430,13 @@ export default new Vuex.Store({
 
     sendMailFileClient(state, payload) {
 
-        emailjs.send('service_oghzm3i', 'template_gvdmscx', payload, '8y6vymIBpdZEdKKoL' )
-          .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            state.loading = false
-          }, function(error) {
-            console.log('FAILED...', error)
-          })  
+      emailjs.send('service_oghzm3i', 'template_gvdmscx', payload, '8y6vymIBpdZEdKKoL')
+        .then(function (response) {
+          console.log('SUCCESS!', response.status, response.text);
+          state.loading = false
+        }, function (error) {
+          console.log('FAILED...', error)
+        })
     },
 
     copyToClipboard(state, data) {
@@ -485,7 +481,16 @@ export default new Vuex.Store({
    */
 
   actions: {
-    getListAccount({ commit }) {
+    getListAccount({ commit, state }) {
+
+      if (state.company.length > 0) {
+
+        console.log("company: ", "no esta vacio")
+      } else {
+        console.log("company: ", "esta vacio")
+
+      }
+
       commit("getListAccount")
       // show snackbar
       commit("showSnackbar", {
@@ -495,7 +500,7 @@ export default new Vuex.Store({
     },
     onFileChange({ commit }, file) {
       commit("onFileChange", file)
-      
+
     },
     addListCompany({ commit }, data) {
       commit("addListCompany", data)
@@ -512,7 +517,13 @@ export default new Vuex.Store({
         .then(response => {
           commit("deleteFile")
           // show snackbar
-          commit("showSnackbar", "Archivo eliminado", "success")
+          commit("showSnackbar",
+            {
+              text: "Cuentas Eliminadas",
+              color: "green"
+            }
+
+          )
 
           console.log('Collection deleted, now do something.')
         })
@@ -592,14 +603,14 @@ export default new Vuex.Store({
 
     },
 
-    deleteHistory({ commit }, {id, account_gts}) {
+    deleteHistory({ commit }, { id, account_gts }) {
 
-        const deleteHistory = () => {
+      const deleteHistory = () => {
         return new Promise((resolve, reject) => {
-          resolve(commit("deleteHistory", {id: id, account_gts: account_gts}))
+          resolve(commit("deleteHistory", { id: id, account_gts: account_gts }))
           reject(new Error('Something went wrong!'))
         })
-      } 
+      }
 
       // use then() to get the result of the promise
       deleteHistory().then(() => {
@@ -609,7 +620,7 @@ export default new Vuex.Store({
           color: "green"
         })
       }
-      )  
+      )
     },
 
 
@@ -639,7 +650,7 @@ export default new Vuex.Store({
       })
 
       return advances
-    
+
     }
 
   },

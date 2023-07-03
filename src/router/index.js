@@ -12,7 +12,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 
 Vue.use(VueRouter)
 
-const routes = [  
+const routes = [
   {
     path: '/loging',
     name: 'loging',
@@ -46,7 +46,7 @@ const routes = [
     meta: {
       requiresAuth: true
     }
-  },  
+  },
   {
     path: '/feed',
     name: 'feed',
@@ -60,14 +60,14 @@ const routes = [
 
 
 // getcurrentuser function
- const getCurrentUser = () => {
+const getCurrentUser = () => {
   return new Promise((resolve, reject) => {
     const unsubscribe = onAuthStateChanged(getAuth(), user => {
       unsubscribe()
       resolve(user)
     }, reject)
   })
-} 
+}
 
 
 const router = new VueRouter({
